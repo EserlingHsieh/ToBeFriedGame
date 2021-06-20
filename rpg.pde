@@ -6,7 +6,7 @@ PImage rpgBg0,rpgBg1,rpgMain,rpgMainHovered,ticket,rpgExplain;
 PImage explain[];
 PImage explainhovered[];
 PImage rpgPhoto[];
-PImage rpgHeart;
+PImage rpgHeart,gameLose,gameLoseHovered;
 PImage yesOil,noOil,yesEgg,noEgg,yesFlour,noFlour;
 
 final int RPG_UNIT=96;
@@ -61,6 +61,8 @@ void setup() {
   rpgBg1 = loadImage("img/rpg/bg1.png");
   rpgMain = loadImage("img/rpgMain.png");
   rpgMainHovered = loadImage("img/rpgMainHovered.png");
+  gameLose = loadImage("img/rpg/gameLose.png");
+  gameLoseHovered = loadImage("img/rpg/gameLoseHovered.png");
   ticket = loadImage("img/ticket.png");
   rpgFront = loadImage("img/rpg/front.png");
   rpgBack = loadImage("img/rpg/back.png");
@@ -82,13 +84,12 @@ void setup() {
   yesFlour = loadImage("img/rpg/yesFlour.png");
   noFlour = loadImage("img/rpg/noFlour.png");
   rpgExplain = loadImage("img/rpg/rpgExplain.png");
-  explain =new PImage[3];
-  explainhovered =new PImage[3];
-  for(int i=0;i<3;i++){
+  explain =new PImage[6];
+  explainhovered =new PImage[6];
+  for(int i=0;i<6;i++){
     explain[i] = loadImage("img/rpg/explain"+i+".png");
     explainhovered[i] = loadImage("img/rpg/explainhovered"+i+".png");
   }
-  
   //load npc image
   rpgPhoto = new PImage[13];//npc number+player
   for(int j = 0; j < 13; j++){ //13=allnpc+player+1
@@ -103,7 +104,21 @@ void setup() {
   rpgSong = minim.loadFile("sound/rpgBackground.mp3");
   rpgStart = minim.loadFile("sound/rpgStart.mp3");
   
-  //rpgMapL
+
+  // Initialize Game
+  initGame();
+ 
+ }
+
+void initGame(){
+  rpgplayer= new Rpgplayer();
+  rpgtalk= new Rpgtalk();
+  rpgBgX=0;
+  rpgOil=false;
+  rpgEgg=false;
+  rpgFlour=false;
+  
+ //rpgMapL
   rpgMapL = new int [7][13];
   for(int i=0;i<rpgMapL.length;i++){
     for(int k=0; k<rpgMapL[i].length;k++){
@@ -134,7 +149,6 @@ void setup() {
   rpgMapL[2][8]=3;
   rpgMapL[1][6]=11;
     
-  
   //rpgMapR
   rpgMapR = new int [7][13];
   for(int i=0;i<rpgMapR.length;i++){
@@ -152,9 +166,10 @@ void setup() {
   }
     rpgMapR[2][10]=1;
     //fixing edge for win time
-    rpgMapR[3][11]=1;
-    rpgMapR[3][12]=1;
-    
+    for(int i=0;i<7;i++){
+    rpgMapR[i][11]=1;
+    rpgMapR[i][12]=1;
+    }
   //npc where  
   rpgMapR[4][7]=5;
   rpgMapR[6][8]=12;
@@ -162,23 +177,17 @@ void setup() {
   rpgMapR[2][8]=8;
   rpgMapR[2][9]=9;
   
-  //Load sub game
+ 
+   //Load sub game
   music = new Music();
   music.setup(minim);
-
-  // Initialize Game
-  initGame();
- 
- }
-
-void initGame(){
-  rpgplayer= new Rpgplayer();
-  rpgtalk= new Rpgtalk();
-  rpgBgX=0;
-  rpgOil=false;
-  rpgEgg=false;
-  rpgFlour=false;
   
+  rpgSongIsPlaying=false;
+  rpgExplaining=false;
+  rpgStoryTelling=true;
+  rpgStoryClicking=0;
+  
+  c.reset();
 }
 
 
@@ -320,9 +329,26 @@ if( abs(rpgplayer.col-3)==3 &&
   break;  
   
   case GAME_OVER:
+  if(mouseX>=539 && mouseX<=733 && mouseY>=506 && mouseY<=557){
+    image(gameLoseHovered,0,0);
+  }else{
+    image(gameLose,0,0);}
   break;
   
   case GAME_WIN:
+  if(rpgStoryClicking<5){
+    if(mouseX>=985 && mouseX<=1049 && mouseY>=349 && mouseY<=424){
+    image(explainhovered[rpgStoryClicking],0,0);
+    }else{
+    image(explain[rpgStoryClicking],0,0);}
+  }else{
+    if(mouseX>=590 && mouseX<=722 && mouseY>=492 && mouseY<=525){
+    image(explainhovered[rpgStoryClicking],0,0);
+    }else{
+    image(explain[rpgStoryClicking],0,0);
+    }
+  }  
+    
   break;
   
   case GAME_MUSIC:
@@ -401,20 +427,53 @@ void keyPressed(){
 } 
 
 void mouseClicked(){
-  if(rpgStoryTelling){
-    if(mouseX >= 985 && mouseX <= 1049 
-    && mouseY >= 349 && mouseY <= 424){
-      dogoClick.trigger();
-      rpgStoryClicking+=1;
-      if(rpgStoryClicking==3){
-        rpgStoryTelling=false;
-        rpgStart.pause();
-        rpgExplaining=true;
-        rpgSongIsPlaying=true;
+  
+  switch (gameState){
+    case GAME_RPG:
+      if(rpgStoryTelling){
+        if(mouseX >= 985 && mouseX <= 1049 
+        && mouseY >= 349 && mouseY <= 424){
+          bigClick.trigger();
+          rpgStoryClicking+=1;
+          if(rpgStoryClicking==3){
+            rpgStoryTelling=false;
+            rpgStart.pause();
+            rpgExplaining=true;
+            rpgSongIsPlaying=true;
+          }
+        }
       }
-    }
-  }  
+    break;
+    
+    case GAME_WIN:
+      if(rpgStoryClicking<5){
+        if(mouseX >= 985 && mouseX <= 1049 
+        && mouseY >= 349 && mouseY <= 424){
+            bigClick.trigger();
+            rpgStoryClicking+=1;
+        }
+      }else{
+        if(mouseX >= 590 && mouseX <= 722 
+        && mouseY >= 492 && mouseY <= 525){
+            bigClick.trigger();
+            rpgStoryClicking=0;
+            gameState=GAME_START;
+            initGame();
+        }
+      }
+    break;
+    
+    case GAME_OVER:
+      if(mouseX>=539 && mouseX<=733 && mouseY>=506 && mouseY<=557){
+        gameState=GAME_START;
+        initGame();
+      }
+    break;
+    
+  }
+    
 }
+
   
 String keyAnalyzer(char c){
   if (c >= 'a' && c <= 'z' 

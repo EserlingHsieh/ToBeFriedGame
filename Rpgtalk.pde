@@ -92,10 +92,12 @@ class Rpgtalk {
   Rpgtalk(){
     talk0 = loadStrings("data/talking0.txt");
     searchName= new String[talk0.length/2+1];
+    
     //choose game Npc
-    int[] g = gameNpc(8,3);
+    int[] g = gameNpc(10,3);
     for (int i=0;i<3;i++){
       whoGameNpc[i]=g[i];}
+      
     npcArray = new Npc[talk0.length];
     for (int i = 0; i < talk0.length; i+=2) {
       //if this Npc have game
