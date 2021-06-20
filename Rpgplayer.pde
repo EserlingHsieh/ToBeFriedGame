@@ -107,6 +107,8 @@ void update(){
     if(rpgOil && rpgEgg && rpgFlour ){
       if(col==3 && row==12 && rpgSpaceClick){
         gameState=GAME_WIN;
+        rpgSong.pause();
+        gameWinSong.loop();
       }
     }
     

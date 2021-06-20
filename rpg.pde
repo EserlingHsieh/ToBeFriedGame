@@ -50,7 +50,7 @@ int rpgStoryClicking=0;
 
 Minim minim;
 AudioSample dogoClick,walking,bigClick;
-AudioPlayer rpgSong, rpgStart;
+AudioPlayer rpgSong, rpgStart, gameWinSong;
 
 Music music;
 
@@ -103,6 +103,7 @@ void setup() {
   walking = minim.loadSample("sound/walking.mp3");
   rpgSong = minim.loadFile("sound/rpgBackground.mp3");
   rpgStart = minim.loadFile("sound/rpgStart.mp3");
+  gameWinSong = minim.loadFile("sound/gameWinSong.mp3");
   
 
   // Initialize Game
@@ -182,6 +183,11 @@ void initGame(){
   music = new Music();
   music.setup(minim);
   
+  rpgSong.rewind();
+  rpgStart.rewind();
+  rpgStart.loop();
+  gameWinSong.rewind();
+  
   rpgSongIsPlaying=false;
   rpgExplaining=false;
   rpgStoryTelling=true;
@@ -196,7 +202,6 @@ void draw(){
   switch (gameState) {
 
     case GAME_START: 
-      rpgStart.play();
       rpgSpaceClick=false;
       if(mouseX>=518 && mouseX<=773 && mouseY>=553 &&mouseY<=608){
         image(rpgMainHovered,0,0); 
@@ -227,9 +232,6 @@ void draw(){
       
     
     case GAME_RPG:
-    if(rpgSongIsPlaying){
-    rpgSong.play();
-    }
   if(rpgToRight || rpgToLeft){
     rpgLeftEdge=0;
     rpgRightEdge=0;
@@ -371,8 +373,10 @@ if( abs(rpgplayer.col-3)==3 &&
       }else{
         rpgHealth--;
         //& reset game
+        music = new Music();
+        music.setup(minim);
       }
-      rpgSong.play();
+      rpgSong.loop();
       gameState=GAME_RPG;
     }
   break;
@@ -440,6 +444,7 @@ void mouseClicked(){
             rpgStart.pause();
             rpgExplaining=true;
             rpgSongIsPlaying=true;
+            rpgSong.loop();
           }
         }
       }
@@ -458,6 +463,7 @@ void mouseClicked(){
             bigClick.trigger();
             rpgStoryClicking=0;
             gameState=GAME_START;
+            gameWinSong.pause();
             initGame();
         }
       }

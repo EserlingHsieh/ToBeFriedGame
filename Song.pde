@@ -41,8 +41,9 @@ class Song{
     //text(getCurrentWavePeak(), 30, 180);
     
     stroke( 255, 0, 0 );
-    float position = map( player.position(), 0, songLength, 0, width );
-    line( position, 0, position, height );
+    //if need song length running shrimp
+    //float position = map( player.position(), 0, songLength, 0, width );
+    //line( position, 0, position, height );
     
     currentFrameIndex = int(getCurrentFrame()) + music.playerOffsetFix;
     

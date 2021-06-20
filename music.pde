@@ -14,7 +14,7 @@ class Music{
   PImage movingFlour,musicExplain;
   float movingFlourY1=0;
   float movingFlourY2=0;
-  float targetScore=25000;
+  float targetScore=24000;
   float perfectScore=27000;
   int countFlourDrop=0;
   boolean hadStartToPlay=false;
