@@ -103,6 +103,12 @@ class Music{
         }
       }
     }
+    /*if(currentSong.score>=targetScore){
+      scale(0.45);
+      image(danceImages[danceCount],0,480);
+      image(danceImages[danceCount],250,480);
+    }*/
+    
     if(!hadStartToPlay){
       image(musicExplain,0,0);
     }
@@ -119,12 +125,15 @@ class Music{
     if(key==CODED){
       switch(keyCode){
         case LEFT:
+          //drum.trigger();
           left = true;
           break;
         case UP:
+          //drum.trigger();
           up = true;
           break;
         case RIGHT:
+          //drum.trigger();
           right = true;
           break;
       }

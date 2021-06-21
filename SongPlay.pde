@@ -72,7 +72,7 @@ class SongPlay extends Song{
     {
       pulseColor = min(255, pulseColor + 30);
     }
-    //stroke(255,pulseColor,pulseColor);
+    stroke(255,pulseColor,pulseColor);
     //fill(255,pulseColor,pulseColor);
     //circle(30, 250, 20);
     

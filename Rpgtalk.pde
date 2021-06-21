@@ -33,7 +33,6 @@ class Rpgtalk {
             rpgMapR[3][10]=0;
             rpgMapR[3][11]=0;
             rpgMapR[3][12]=0;
-            //gameState=GAME_WIN;
             }
             if(whoTalk==whoGameNpc[0]){
             gameState=GAME_MUSIC;

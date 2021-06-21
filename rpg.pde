@@ -8,6 +8,7 @@ PImage explainhovered[];
 PImage rpgPhoto[];
 PImage rpgHeart,gameLose,gameLoseHovered;
 PImage yesOil,noOil,yesEgg,noEgg,yesFlour,noFlour;
+PImage rpgCantGo, rpgCanGo;
 
 final int RPG_UNIT=96;
 final int RPG_EDGE_X=16;
@@ -48,9 +49,11 @@ boolean rpgExplaining=false;
 boolean rpgStoryTelling=true;
 int rpgStoryClicking=0;
 
+boolean demo=false;
+
 Minim minim;
-AudioSample dogoClick,walking,bigClick;
-AudioPlayer rpgSong, rpgStart, gameWinSong;
+AudioSample dogoClick,walking,bigClick,drum;
+AudioPlayer rpgSong, rpgStart, gameWinSong, gameLoseSong;
 
 Music music;
 
@@ -84,6 +87,8 @@ void setup() {
   yesFlour = loadImage("img/rpg/yesFlour.png");
   noFlour = loadImage("img/rpg/noFlour.png");
   rpgExplain = loadImage("img/rpg/rpgExplain.png");
+  rpgCanGo = loadImage("img/rpg/rpgCanGo.png");
+  rpgCantGo = loadImage("img/rpg/rpgCantGo.png");
   explain =new PImage[6];
   explainhovered =new PImage[6];
   for(int i=0;i<6;i++){
@@ -104,6 +109,8 @@ void setup() {
   rpgSong = minim.loadFile("sound/rpgBackground.mp3");
   rpgStart = minim.loadFile("sound/rpgStart.mp3");
   gameWinSong = minim.loadFile("sound/gameWinSong.mp3");
+  drum = minim.loadSample("sound/drum.mp3");
+  gameLoseSong = minim.loadFile("sound/gameLoseSong.mp3");
   
 
   // Initialize Game
@@ -118,6 +125,10 @@ void initGame(){
   rpgOil=false;
   rpgEgg=false;
   rpgFlour=false;
+  rpgHealth=3;
+  
+  //setup first name
+  playerName="蝦蝦";
   
  //rpgMapL
   rpgMapL = new int [7][13];
@@ -187,6 +198,7 @@ void initGame(){
   rpgStart.rewind();
   rpgStart.loop();
   gameWinSong.rewind();
+  gameLoseSong.rewind();
   
   rpgSongIsPlaying=false;
   rpgExplaining=false;
@@ -221,7 +233,12 @@ void draw(){
       c.display();
       
       if(rpgSpaceClick){
-        playerName=c.readString();
+        if(c.chars.length()==0){    
+          playerName="蝦蝦";
+        }
+        else{
+          playerName=c.readString();
+        }  
         rpgtalk.assignPlayerName();
         bigClick.trigger();
         //println(playerName);
@@ -288,6 +305,8 @@ if( abs(rpgplayer.col-3)==3 &&
   image(rpgHeart,15+i*110,10);}
   if(rpgHealth==0){
     gameState=GAME_OVER;
+    rpgSong.pause();
+    gameLoseSong.play();
   }
   
   //collect item
@@ -328,13 +347,27 @@ if( abs(rpgplayer.col-3)==3 &&
   rpgSpaceClick=false;
   rpgStartTalk=false;
   
+  
+  //demo ing
+  if(demo){
+    text("demo:F-health G+health H_oil J_egg K_flour" ,20,130);
+  }
+  
   break;  
   
   case GAME_OVER:
-  if(mouseX>=539 && mouseX<=733 && mouseY>=506 && mouseY<=557){
+  if(mouseX>=539 && mouseX<=733 && mouseY>=430 && mouseY<=481){
     image(gameLoseHovered,0,0);
   }else{
     image(gameLose,0,0);}
+    textFont(myFont);
+    fill(135, 119, 118);
+    pushMatrix();
+    rotate(radians(13));
+    text(playerName,210,565);
+    popMatrix();   
+    image(rpgCantGo,364,550);
+  
   break;
   
   case GAME_WIN:
@@ -344,11 +377,18 @@ if( abs(rpgplayer.col-3)==3 &&
     }else{
     image(explain[rpgStoryClicking],0,0);}
   }else{
-    if(mouseX>=590 && mouseX<=722 && mouseY>=492 && mouseY<=525){
+    if(mouseX >= 588 && mouseX <= 720 && mouseY >= 459 && mouseY <= 492){
     image(explainhovered[rpgStoryClicking],0,0);
     }else{
     image(explain[rpgStoryClicking],0,0);
     }
+    textFont(myFont);
+    fill(64, 94, 99);
+    pushMatrix();
+    rotate(radians(13));
+    text(playerName,210,565);
+    popMatrix();   
+    image(rpgCanGo,364,550);
   }  
     
   break;
@@ -417,6 +457,34 @@ void keyPressed(){
           rpgplayer.keyInput(keyCode);
         }
       }
+       if(key=='d'){
+          demo=!demo;
+        }
+       if(demo){
+         switch(key){
+           case 'f':
+           if(rpgHealth>0){
+             rpgHealth--;}
+           break;
+           
+           case 'g':
+           if(rpgHealth<3){
+             rpgHealth++;}
+           break;
+           
+           case 'h':
+           rpgOil=!rpgOil;
+           break;
+           
+           case 'j':
+           rpgEgg=!rpgEgg;
+           break;
+           
+           case 'k':
+           rpgFlour=!rpgFlour;
+           break;
+         }
+       }
       break;
     case GAME_MUSIC:
       music.keyPressed();
@@ -458,8 +526,8 @@ void mouseClicked(){
             rpgStoryClicking+=1;
         }
       }else{
-        if(mouseX >= 590 && mouseX <= 722 
-        && mouseY >= 492 && mouseY <= 525){
+        if(mouseX >= 588 && mouseX <= 720 
+        && mouseY >= 459 && mouseY <= 492){
             bigClick.trigger();
             rpgStoryClicking=0;
             gameState=GAME_START;
@@ -470,8 +538,9 @@ void mouseClicked(){
     break;
     
     case GAME_OVER:
-      if(mouseX>=539 && mouseX<=733 && mouseY>=506 && mouseY<=557){
+      if(mouseX>=539 && mouseX<=733 && mouseY>=430 && mouseY<=481){
         gameState=GAME_START;
+        gameLoseSong.pause();
         initGame();
       }
     break;

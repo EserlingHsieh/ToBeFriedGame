@@ -108,7 +108,7 @@ void update(){
       if(col==3 && row==12 && rpgSpaceClick){
         gameState=GAME_WIN;
         rpgSong.pause();
-        gameWinSong.loop();
+        gameWinSong.play();
       }
     }
     
