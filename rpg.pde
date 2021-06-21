@@ -109,7 +109,7 @@ void setup() {
   rpgSong = minim.loadFile("sound/rpgBackground.mp3");
   rpgStart = minim.loadFile("sound/rpgStart.mp3");
   gameWinSong = minim.loadFile("sound/gameWinSong.mp3");
-  drum = minim.loadSample("sound/drum.mp3");
+  drum = minim.loadSample("sound/drum.wav");
   gameLoseSong = minim.loadFile("sound/gameLoseSong.mp3");
   
 
