@@ -57,8 +57,11 @@ AudioPlayer rpgSong, rpgStart, gameWinSong, gameLoseSong;
 
 Music music;
 
+public void settings() {
+  size(1280, 800, "processing.opengl.PGraphics2D");
+}
+
 void setup() {
-  size(1280, 800, P2D);
   frameRate(60);
   rpgBg0 = loadImage("img/rpg/bg0.png");
   rpgBg1 = loadImage("img/rpg/bg1.png");

@@ -22,7 +22,6 @@ class Music{
   Minim mainMinim;
   
   void setup(Minim mainMinim) {
-    size(1280, 800, P2D);
     frameRate(60);
     musicbg = loadImage("img/music/musicbg.png");
     musicroad = loadImage("img/music/musicroad.png");

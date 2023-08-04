@@ -78,7 +78,7 @@ class MusicNote{
   ArrayList<ScoredNode> scoredNodeDisplayBuffer = new ArrayList<ScoredNode>();
   
   MusicNote(String name, float newFrameSpace){
-    String[] lines = loadStrings("data/note/"+name+".txt");
+    String[] lines = loadStrings("note/"+name+".txt");
     frameTotal = int(lines[1]);
     nodes = new Node[frameTotal];
     for(int i = 0; i < frameTotal; i++){

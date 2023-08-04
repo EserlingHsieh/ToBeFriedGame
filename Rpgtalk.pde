@@ -89,7 +89,7 @@ class Rpgtalk {
   }
   
   Rpgtalk(){
-    talk0 = loadStrings("data/talking0.txt");
+    talk0 = loadStrings("talking0.txt");
     searchName= new String[talk0.length/2+1];
     
     //choose game Npc

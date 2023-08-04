@@ -5,7 +5,7 @@ class SongEdit extends Song{
   SongEdit(String name){
     super(name);
     outputNodeSequence = new boolean[durationFrames];
-    output = createWriter("data/note/"+name+"_output.txt");
+    output = createWriter("note/"+name+"_output.txt");
   }
   
   void onPlaying(){
